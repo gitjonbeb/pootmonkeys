@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-fullscreen">
+<title>Pootmonkeys: Banana Blast</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: #10141c;
+    overflow: hidden;
+    touch-action: none;
+    -webkit-user-select: none; user-select: none;
+    -webkit-touch-callout: none;
+    font-family: monospace;
+  }
+  #game { width: 100%; height: 100%; }
+  #game canvas { image-rendering: pixelated; }
+
+  /* Portrait overlay (§3): shown only in portrait orientation */
+  #rotate {
+    display: none;
+    position: fixed; inset: 0; z-index: 50;
+    background: #10141c; color: #ffe066;
+    text-align: center;
+    flex-direction: column; justify-content: center; align-items: center;
+    font-size: 22px;
+  }
+  #rotate .arrow { font-size: 64px; margin-bottom: 16px; }
+  @media (orientation: portrait) {
+    #rotate { display: flex; }
+  }
+
+  /* Tuning overlay (§7) */
+  #tune {
+    position: fixed; top: 8px; right: 8px; z-index: 60;
+    width: 300px; max-height: 92vh; overflow-y: auto;
+    background: rgba(12, 16, 24, 0.92); color: #cde;
+    border: 1px solid #345; border-radius: 8px;
+    padding: 10px 12px; font-size: 12px; line-height: 1.5;
+    touch-action: pan-y;
+  }
+  #tune h3 { margin: 0 0 6px; font-size: 13px; color: #ffe066; }
+  #tune .row { display: grid; grid-template-columns: 1fr 44px; gap: 6px; align-items: center; }
+  #tune .row label { display: block; }
+  #tune input[type=range] { width: 100%; }
+  #tune .val { text-align: right; color: #9f9; }
+  #tune .btns { margin-top: 8px; display: flex; gap: 8px; }
+  #tune button {
+    flex: 1; background: #234; color: #cde; border: 1px solid #456;
+    border-radius: 6px; padding: 6px 4px; font-family: monospace; font-size: 12px;
+  }
+  #tune button:active { background: #345; }
+  #tune .note { color: #789; margin-top: 6px; }
+  #tune textarea {
+    width: 100%; height: 110px; margin-top: 6px; display: none;
+    background: #0a0e14; color: #9f9; border: 1px solid #345; font-size: 11px;
+  }
+</style>
+</head>
+<body>
+<div id="game"></div>
+
+<div id="rotate">
+  <div class="arrow">&#8634;</div>
+  <div>Rotate your tablet sideways!</div>
+</div>
+
+<div id="tune" hidden>
+  <h3>TUNING &mdash; live</h3>
+  <div id="tuneRows"></div>
+  <div class="btns">
+    <button id="tuneReset" type="button">Reset</button>
+    <button id="tuneCopy" type="button">Copy values</button>
+  </div>
+  <textarea id="tuneOut" readonly></textarea>
+  <div class="note">Backtick (`) or ?tune=1 toggles. R restarts the level.</div>
+</div>
+
+<!-- Classic scripts, no modules: keeps file:// double-click working for the gray-box phase -->
+<script src="vendor/phaser.min.js"></script>
+<script src="src/tuning.js"></script>
+<script src="src/audio.js"></script>
+<script src="src/scenes/BootScene.js"></script>
+<script src="src/scenes/TitleScene.js"></script>
+<script src="src/scenes/SelectScene.js"></script>
+<script src="src/scenes/GameScene.js"></script>
+<script src="src/scenes/FinishScene.js"></script>
+<script src="src/main.js"></script>
+
+<script>
+// ---- Tuning overlay wiring (DOM side; game reads window.TUNING live) ----
+(function () {
+  if (!window.TUNE_ENABLED) return;
+  const T = window.TUNING;
+  const panel = document.getElementById('tune');
+  const rowsEl = document.getElementById('tuneRows');
+  const SLIDERS = [
+    ['gravity',        'Gravity',            600, 2400, 10],
+    ['jumpVelocity',   'Jump velocity',      300,  800,  5],
+    ['moveSpeed',      'Move speed',         100,  400,  5],
+    ['pootVertical',   'Poot vertical',      200,  700,  5],
+    ['pootHorizontal', 'Poot horizontal',      0,  500,  5],
+    ['coyoteMs',       'Coyote time (ms)',     0,  250,  5],
+    ['jumpBufferMs',   'Jump buffer (ms)',     0,  250,  5],
+    ['mudSlowPct',     'Mud speed (%)',       10,  100,  5],
+    ['pootCharges',    'Max poot charges',     0,    5,  1],
+  ];
+  const inputs = {};
+
+  function build() {
+    rowsEl.innerHTML = '';
+    SLIDERS.forEach(function (s) {
+      const key = s[0];
+      const wrap = document.createElement('div');
+      wrap.className = 'row';
+      const label = document.createElement('label');
+      label.textContent = s[1];
+      const val = document.createElement('span');
+      val.className = 'val';
+      val.textContent = T[key];
+      const input = document.createElement('input');
+      input.type = 'range'; input.min = s[2]; input.max = s[3]; input.step = s[4];
+      input.value = T[key];
+      input.addEventListener('input', function () {
+        T[key] = parseFloat(input.value);
+        val.textContent = T[key];
+      });
+      inputs[key] = { input: input, val: val };
+      const left = document.createElement('div');
+      left.appendChild(label); left.appendChild(input);
+      wrap.appendChild(left); wrap.appendChild(val);
+      rowsEl.appendChild(wrap);
+    });
+  }
+
+  function refresh() {
+    SLIDERS.forEach(function (s) {
+      const key = s[0];
+      inputs[key].input.value = T[key];
+      inputs[key].val.textContent = T[key];
+    });
+  }
+
+  document.getElementById('tuneReset').addEventListener('click', function () {
+    SLIDERS.forEach(function (s) { T[s[0]] = window.TUNING_DEFAULTS[s[0]]; });
+    refresh();
+  });
+
+  document.getElementById('tuneCopy').addEventListener('click', function () {
+    const out = {};
+    SLIDERS.forEach(function (s) { out[s[0]] = T[s[0]]; });
+    out.jumpCutMultiplier = T.jumpCutMultiplier;
+    const text = JSON.stringify(out, null, 2);
+    const ta = document.getElementById('tuneOut');
+    function fallback() {
+      ta.style.display = 'block'; ta.value = text; ta.select();
+      console.log('TUNING VALUES:\n' + text);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        console.log('TUNING VALUES copied to clipboard:\n' + text);
+      }, fallback);
+    } else { fallback(); }
+  });
+
+  function toggle() { panel.hidden = !panel.hidden; }
+  window.addEventListener('keydown', function (e) {
+    if (e.code === 'Backquote') { e.preventDefault(); toggle(); }
+  });
+  build();
+  if (/[?&]tune=1/.test(location.search)) panel.hidden = false;
+})();
+</script>
+</body>
+</html>
