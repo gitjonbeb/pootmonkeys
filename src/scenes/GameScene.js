@@ -68,7 +68,8 @@ class GameScene extends Phaser.Scene {
     mud.refreshBody();
 
     // ---- player ----
-    this.spawnX = 120; this.spawnY = 450;
+    // spawn clear of the bottom-left touch buttons (camera is left-clamped here)
+    this.spawnX = 300; this.spawnY = 450;
     this.player = this.physics.add.image(this.spawnX, this.spawnY, 'player');
     this.player.body.setSize(T.hurtW, T.hurtH); // hurtbox smaller than sprite (§6)
     this.player.body.setOffset((T.playerW - T.hurtW) / 2, T.playerH - T.hurtH);
@@ -80,7 +81,8 @@ class GameScene extends Phaser.Scene {
     this.bananas = this.physics.add.group({ allowGravity: false, immovable: true });
     const bananaAt = (tx, row) => this.bananas.create(tx * TILE, row * TILE, 'banana');
     [
-      [8, 8.5], [9.5, 8.5], [11, 8.5], [12.5, 8.5],            // intro line
+      [7, 9], [8.5, 9],                                         // walk-height: first reward is free
+      [10.5, 8.5], [12, 8.5], [13.5, 8.5],                      // then a hop teaches jumping
       [20.5, 8], [21.5, 8],                                     // gap 1 arc
       [24, 8.5], [26, 8.5], [28, 8.5],                          // seg 2
       [30.5, 8], [31.5, 8],                                     // gap 2 arc
