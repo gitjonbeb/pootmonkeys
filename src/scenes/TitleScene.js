@@ -14,7 +14,7 @@ class TitleScene extends Phaser.Scene {
     this.add.text(cx, 265, 'A Poppy Studios Production', {
       fontFamily: 'monospace', fontSize: '16px', color: '#8ea2bd',
     }).setOrigin(0.5);
-    this.add.text(cx, 330, '[ jungle build v0.3 ]', {
+    this.add.text(cx, 330, '[ v0.4 - now starring all five of you ]', {
       fontFamily: 'monospace', fontSize: '14px', color: '#5a7292',
     }).setOrigin(0.5);
 
@@ -23,8 +23,14 @@ class TitleScene extends Phaser.Scene {
     }).setOrigin(0.5);
     this.tweens.add({ targets: prompt, alpha: 0.25, duration: 550, yoyo: true, repeat: -1 });
 
+    // a base monkey jogs across the bottom, forever
+    const cameo = this.add.sprite(-40, 500, 'monkey_idle0');
+    cameo.play('monkey_run');
+    this.tweens.add({ targets: cameo, x: 1010, duration: 7000, repeat: -1 });
+
     const go = () => {
       window.SFX.unlock();
+      window.Voice.init();
       this.scene.start('Select');
     };
     this.input.once('pointerdown', go);
