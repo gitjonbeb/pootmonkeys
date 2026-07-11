@@ -127,7 +127,14 @@ class GameScene extends Phaser.Scene {
     this.beansGroup = this.physics.add.group({ allowGravity: false, immovable: true });
     [[35, 8.8], [72, 8.8], [90, 8.8], [111, 8.8], [128, 8.8], [155, 8.8],
      [169, 8.8], [170.5, 8.8], [173, 6.3], [197, 8.8]]
-      .forEach((b) => this.beansGroup.create(b[0] * TILE, b[1] * TILE, 'beans'));
+      .forEach((b) => {
+        const can = this.beansGroup.create(b[0] * TILE, b[1] * TILE, 'beans');
+        // tiny green stink-wisp: same green as the poot meter = "this refills those"
+        can.wisp = this.add.image(can.x + 2, can.y - 24, 'cloud')
+          .setTint(0x8fdf70).setAlpha(0.55).setScale(0.55).setDepth(6);
+        this.tweens.add({ targets: can.wisp, y: can.wisp.y - 6, alpha: 0.25,
+          duration: 650, yoyo: true, repeat: -1 });
+      });
 
     this.physics.add.collider(this.bananas, this.platforms);
     this.physics.add.overlap(this.player, this.bananas, (pl, b) => this.collectBanana(b));
@@ -497,6 +504,7 @@ class GameScene extends Phaser.Scene {
 
   collectBeans(b) {
     if (!b.active) return;
+    if (b.wisp) b.wisp.destroy();
     const T = window.TUNING;
     if (this.charges < T.pootCharges) this.charges += 1;
     window.SFX.beans();
