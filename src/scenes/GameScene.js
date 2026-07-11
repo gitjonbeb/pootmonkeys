@@ -382,8 +382,12 @@ class GameScene extends Phaser.Scene {
 
   respawn() {
     const T = window.TUNING;
-    this.player.setPosition(this.spawnX, this.spawnY);
-    this.player.body.setVelocity(0, 0);
+    if (this.now() < (this.respawnGraceUntil || 0)) return;
+    this.respawnGraceUntil = this.now() + 400;
+    // body.reset() is the proper teleport: it moves the body AND its previous
+    // position, and zeroes velocity. setPosition alone left stale physics state,
+    // letting the body tunnel through the ground (the infinite-fall bug).
+    this.player.body.reset(this.spawnX, this.spawnY);
     this.boostVx = 0;
     this.charges = T.pootCharges;          // meter refills on respawn — be kind (§5.5)
     this.invulnUntil = this.now() + 600;
