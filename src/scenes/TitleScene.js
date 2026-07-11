@@ -14,7 +14,7 @@ class TitleScene extends Phaser.Scene {
     this.add.text(cx, 265, 'A Poppy Studios Production', {
       fontFamily: 'monospace', fontSize: '16px', color: '#8ea2bd',
     }).setOrigin(0.5);
-    this.add.text(cx, 330, '[ gray-box build v0.1 ]', {
+    this.add.text(cx, 330, '[ jungle build v0.3 ]', {
       fontFamily: 'monospace', fontSize: '14px', color: '#5a7292',
     }).setOrigin(0.5);
 
