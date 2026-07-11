@@ -41,6 +41,7 @@ window.Voice = (function () {
       return;
     }
     if (opts.fileOnly) return; // poots stay snappy: no speech latency
+    if (!window.SPEECH_FALLBACK_ENABLED) return; // Jon's verdict: too synthetic
     var c = window.CharUtil.byId(charId);
     var line = c.lines[event];
     if (!line || !window.speechSynthesis) return;

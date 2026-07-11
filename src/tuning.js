@@ -5,6 +5,7 @@
 // Phase 2 bakes Jon's final values in as the new defaults.
 
 window.TUNE_ENABLED = true; // set false for the final family build
+window.SPEECH_FALLBACK_ENABLED = false; // browser TTS retired (too synthetic); real files still play
 
 window.TUNING = {
   // --- world ---
