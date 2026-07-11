@@ -70,7 +70,7 @@ class GameScene extends Phaser.Scene {
                   [115, 32], [149, 16], [167, 26], [195, 25]];
     SEGS.forEach((s) => solid(s[0], groundRow, s[1]));
     // floating platforms: high path (2 poots) + final climb steps
-    const STEPS = [[172, 2, 7], [176, 3, 4.5],
+    const STEPS = [[172, 3, 7], [176, 3, 5],
                    [201, 2, 9], [204, 2, 8], [207, 2, 7], [210, 3, 6]];
     STEPS.forEach((s) => solid(s[0], s[2], s[1]));
 
@@ -109,12 +109,24 @@ class GameScene extends Phaser.Scene {
      [198, 8.5], [201.5, 7.5], [204.5, 6.5], [207.5, 5.5], [210.5, 4.5],
     ].forEach((b) => bAt(b[0], b[1]));
 
-    this.golden = this.physics.add.image(177.5 * TILE, 3 * TILE, 'golden');
+    this.golden = this.physics.add.image(177.5 * TILE, 3.5 * TILE, 'golden');
     this.golden.body.setAllowGravity(false); this.golden.body.immovable = true;
-    this.tweens.add({ targets: this.golden, y: this.golden.y - 8, duration: 700, yoyo: true, repeat: -1 });
+    this.golden.setDepth(6);
+    this.goldenGlow = this.add.image(this.golden.x, this.golden.y, 'cloud')
+      .setTint(0xffd83d).setAlpha(0.45).setScale(2.6).setDepth(5);
+    this.tweens.add({ targets: this.goldenGlow, scale: 3.6, alpha: 0.2, duration: 700, yoyo: true, repeat: -1 });
+    this.goldenSparks = [];
+    for (let gi = 0; gi < 3; gi++) {
+      const sp = this.add.image(this.golden.x + [-26, 24, 2][gi], this.golden.y + [-18, -8, 24][gi], 'px')
+        .setTint(0xfff3b0).setDepth(7).setScale(2);
+      this.goldenSparks.push(sp);
+      this.tweens.add({ targets: sp, alpha: 0.1, scale: 0.6, duration: 380 + gi * 140, yoyo: true, repeat: -1 });
+    }
+    this.tweens.add({ targets: [this.golden, this.goldenGlow], y: '-=10', duration: 700, yoyo: true, repeat: -1 });
 
     this.beansGroup = this.physics.add.group({ allowGravity: false, immovable: true });
-    [[72, 8.8], [111, 8.8], [169, 8.8], [170.5, 8.8], [197, 8.8]]
+    [[35, 8.8], [72, 8.8], [90, 8.8], [111, 8.8], [128, 8.8], [155, 8.8],
+     [169, 8.8], [170.5, 8.8], [173, 6.3], [197, 8.8]]
       .forEach((b) => this.beansGroup.create(b[0] * TILE, b[1] * TILE, 'beans'));
 
     this.physics.add.collider(this.bananas, this.platforms);
@@ -392,20 +404,20 @@ class GameScene extends Phaser.Scene {
   enemyTouch(e) {
     if (this.finished || !e.active) return;
     const now = this.now();
-    if (now < e.stunnedUntil) {
-      const falling = this.player.body.velocity.y > 40;
-      const above = this.player.body.bottom < e.body.top + 16;
-      if (falling && above) {
-        this.score += 250;
-        this.enemyPts += 250;
-        window.SFX.bounce();
-        this.puff(e.x, e.y, 0x3f8f3a, 6);
-        if (e.wobble) e.wobble.stop();
-        e.destroy();
-        this.player.body.setVelocityY(-0.6 * window.TUNING.jumpVelocity);
-      }
+    const falling = this.player.body.velocity.y > 40;
+    const above = this.player.body.bottom < e.body.top + 16;
+    if (falling && above) {
+      // Mario's law, per the grandkids: bouncing works whether or not it's stunned
+      this.score += 250;
+      this.enemyPts += 250;
+      window.SFX.bounce();
+      this.puff(e.x, e.y, 0x3f8f3a, 6);
+      if (e.wobble) e.wobble.stop();
+      e.destroy();
+      this.player.body.setVelocityY(-0.6 * window.TUNING.jumpVelocity);
       return;
     }
+    if (now < e.stunnedUntil) return; // stunned: harmless from the side
     if (now >= this.invulnUntil) this.takeHit(e.x);
   }
 
@@ -465,8 +477,15 @@ class GameScene extends Phaser.Scene {
     this.score += 1000;
     this.goldenPts = 1000;
     window.SFX.golden();
-    this.puff(this.golden.x, this.golden.y, 0xf2b632, 10);
-    this.cameras.main.flash(140, 60, 50, 10);
+    this.puff(this.golden.x, this.golden.y, 0xf2b632, 12);
+    this.cameras.main.flash(180, 70, 58, 12);
+    this.hitStop(70);
+    const t = this.add.text(this.golden.x, this.golden.y - 20, '+1000!', {
+      fontFamily: 'monospace', fontSize: '28px', color: '#ffd83d', fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(50);
+    this.tweens.add({ targets: t, y: t.y - 60, alpha: 0, duration: 1100, onComplete: () => t.destroy() });
+    this.goldenGlow.destroy();
+    this.goldenSparks.forEach((sp) => sp.destroy());
     this.golden.destroy();
   }
 

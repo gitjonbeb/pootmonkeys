@@ -12,7 +12,7 @@ class BootScene extends Phaser.Scene {
     // ---- pixel sprites ----
     PA.monkeyFrames(this, 'monkey', 2);              // 20x24 grid -> 40x48
     PA.render(this, 'banana', PA.GRIDS.banana, 2);   // 20x18
-    PA.render(this, 'golden', PA.GRIDS.golden, 2);
+    PA.render(this, 'golden', PA.GRIDS.golden, 3); // big and unmistakable
     PA.render(this, 'beans', PA.GRIDS.beans, 2);
     PA.render(this, 'coconut', PA.GRIDS.coconut, 2);
     PA.render(this, 'bees0', PA.GRIDS.bees0, 2);
