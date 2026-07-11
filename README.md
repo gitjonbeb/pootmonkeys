@@ -10,7 +10,12 @@ A Poppy Studios Production.
 
 ## Current status
 
-**v0.1-graybox** — Phase 1 gray-box prototype. Rectangles and circles only.
+**v0.2-tuned** — Phase 2 complete: Jon signed off on movement and poot feel
+with the shipped defaults; the pit-respawn bug is fixed. Next: Phase 3 (full
+12,000 px level, pixel-art monkey with six animation states, jungle tileset,
+parallax, coconuts, bees, snake, checkpoints).
+
+Phase 1 gray-box prototype was rectangles and circles only.
 Movement, jump (coyote time + jump buffering), poot boost with charge meter,
 beans refueling, bananas and score, mud pit, poot-required gap, one patrolling
 enemy with stun and bounce-defeat, finish door, count-up timer, keyboard and

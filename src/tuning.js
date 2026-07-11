@@ -1,4 +1,6 @@
 // tuning.js — every adjustable constant lives here (brief §3, §5.3, §7).
+// PHASE 2 SIGNED OFF (Jon, 2026-07-11): shipped defaults confirmed as the
+// tuned values — movement and poot feel approved as-is. jump-cut retained.
 // The tuning overlay (backtick or ?tune=1) edits these live.
 // Phase 2 bakes Jon's final values in as the new defaults.
 
