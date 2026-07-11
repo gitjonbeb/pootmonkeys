@@ -13,3 +13,11 @@ Golden-banana moment reserved for voice clips (assets/voices/, Phase 4 mechanism
 | 5    | Ellie  | Sunshine yellow                | Pigtails with bows     | "Again! Again!"                   | Bounces, endlessly                         |
 
 Five slots (brief §5.7 amended from four by Jon). Abilities identical; cosmetic only.
+
+## Voice plan (decided 2026-07-11)
+
+Priority per event: real recording file -> built-in browser speech
+(speechSynthesis, per-character pitch/rate, triggered only after user input,
+respects mute) -> silence. Recording list lives in Jon's outputs
+(pootmonkeys-recording-list.md); filenames: <name>_<event>.m4a|mp3.
+Real files replace synthetic lines per-slot, no rebuild.
