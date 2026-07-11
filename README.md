@@ -10,7 +10,16 @@ A Poppy Studios Production.
 
 ## Current status
 
-**v0.3-skinned** — Phase 3 complete: full-length jungle level (8 sections,
+**v0.4-characters** — Phase 4 complete: Mason, Emmy, Brooks, Lilah, and Ellie
+as cosmetic variants (palette swap + accessory, identical abilities), character
+select with catchphrase bubbles and spoken lines, per-character tinted poot
+clouds and victory flourishes, pause menu with touch buttons, ranks, top-10
+high scores with initials (per device), and the voice-slot system. Voices:
+real recordings in assets/voices/ take priority; until they arrive, the
+device's built-in speech reads each catchphrase (the 404s in the console for
+missing voice files are expected and harmless). Next: Phase 5 family release.
+
+Phase 3 was: full-length jungle level (8 sections,
 ~220 tiles), pixel-art monkey with six animation states, crescent bananas,
 golden banana on the optional high path, coconut palms, bee swarm, snake,
 three checkpoints, two parallax canopy layers. All art is generated at runtime
@@ -81,9 +90,13 @@ dist/               standalone single-file build (Phase 5)
 
 ## Voice clips (Phase 4 mechanism, Phase 3+ recordings)
 
-`assets/voices/manifest.json` will map events (`select`, `poot`, `golden`,
-`victory`) per character to `.m4a`/`.mp3` files. Missing files are skipped
-silently. Instructions land here when the mechanism ships in Phase 4.
+`assets/voices/manifest.json` maps events (`select`, `poot`, `golden`,
+`victory`) per character to `.m4a`/`.mp3` files. Drop recordings into
+`assets/voices/` using the names in the manifest (e.g. `mason_poot.m4a`),
+push, and they play — no code changes. Missing files are skipped silently and
+fall back to built-in browser speech (except `poot`, which stays sound-effect
+only unless a real recording exists). The recording checklist is
+`pootmonkeys-recording-list.md` in Jon's files.
 
 ## Deploying to GitHub Pages
 

@@ -14,6 +14,8 @@ class GameScene extends Phaser.Scene {
   create() {
     const T = window.TUNING;
     this.physics.world.resume(); // restart can happen mid hit-stop
+    this.charId = this.registry.get('charId') || window.CharUtil.savedCharId();
+    this.char = window.CharUtil.byId(this.charId);
 
     // ---- state ----
     this.tnow = 0;
@@ -86,7 +88,7 @@ class GameScene extends Phaser.Scene {
     // ---- player ----
     this.spawnX = 300; this.spawnY = 450;
     this.checkpointX = this.spawnX; this.checkpointY = this.spawnY;
-    this.player = this.physics.add.sprite(this.spawnX, this.spawnY, 'monkey_idle0');
+    this.player = this.physics.add.sprite(this.spawnX, this.spawnY, this.charId + '_idle0');
     this.player.body.setSize(T.hurtW, T.hurtH);
     this.player.body.setOffset((T.playerW - T.hurtW) / 2, T.playerH - T.hurtH);
     this.player.setCollideWorldBounds(true);
@@ -340,13 +342,14 @@ class GameScene extends Phaser.Scene {
   }
 
   updateAnim(now, dir, grounded) {
+    const p = this.charId;
     let name;
-    if (this.finished) name = 'm_vic';
-    else if (now < this.hitAnimUntil) name = 'm_hit';
-    else if (now < this.pootAnimUntil) name = 'm_poot';
-    else if (!grounded) name = this.player.body.velocity.y < -40 ? 'm_jump' : 'm_fall';
-    else if (dir !== 0) name = 'm_run';
-    else name = 'm_idle';
+    if (this.finished) name = p + '_vic';
+    else if (now < this.hitAnimUntil) name = p + '_hit';
+    else if (now < this.pootAnimUntil) name = p + '_poot';
+    else if (!grounded) name = this.player.body.velocity.y < -40 ? p + '_jump' : p + '_fall';
+    else if (dir !== 0) name = p + '_run';
+    else name = p + '_idle';
     if (this.curAnim !== name) { this.curAnim = name; this.player.play(name); }
   }
 
@@ -396,10 +399,11 @@ class GameScene extends Phaser.Scene {
         }
       }
     });
-    this.puff(this.player.x, this.player.y + 18, 0x8fdf70, 7);
+    this.puff(this.player.x, this.player.y + 18, this.char.pootTint, 7);
     this.cameras.main.shake(80, 0.004);
     this.hitStop(45);
     window.SFX.poot();
+    window.Voice.say(this.charId, 'poot', { fileOnly: true });
   }
 
   stunEnemy(e) {
@@ -490,6 +494,7 @@ class GameScene extends Phaser.Scene {
     this.score += 1000;
     this.goldenPts = 1000;
     window.SFX.golden();
+    window.Voice.say(this.charId, 'golden');
     this.puff(this.golden.x, this.golden.y, 0xf2b632, 12);
     this.cameras.main.flash(180, 70, 58, 12);
     this.hitStop(70);
@@ -543,15 +548,47 @@ class GameScene extends Phaser.Scene {
     this.score += 500 + timeBonus + (noHit ? 1000 : 0);
     this.player.body.setVelocity(0, 0);
     window.SFX.victory();
+    window.Voice.say(this.charId, 'victory');
+    window.CharUtil.bubble(this, this.player.x, this.player.y - 84, this.char.lines.victory);
     this.puff(this.player.x, this.player.y - 30, 0xffd83d, 10);
+    this.playFlourish();
     const payload = {
       score: this.score, bananas: this.bananaCount, bananaPts: this.bananaPts,
       enemyPts: this.enemyPts, goldenPts: this.goldenPts,
       timeMs: timeMs, timeBonus: timeBonus, noHit: noHit,
     };
     const go = () => { if (this.scene.isActive('Game')) this.scene.start('Finish', payload); };
-    this.time.delayedCall(1100, go);
+    this.time.delayedCall(1600, go);
     this.input.once('pointerdown', go);
+  }
+
+  playFlourish() {
+    const px = this.player.x, py = this.player.y;
+    const F = this.char.flourish;
+    if (F === 'dunk') {
+      const b = this.add.image(px, py - 100, 'banana').setDepth(30);
+      this.tweens.add({ targets: b, y: py + 4, duration: 360, delay: 200, ease: 'Quad.easeIn',
+        onComplete: () => { this.puff(px, py, 0xffd83d, 8); this.cameras.main.shake(60, 0.004); b.destroy(); } });
+    } else if (F === 'sparkle') {
+      for (let i = 0; i < 10; i++) {
+        const a = (i / 10) * Math.PI * 2;
+        const sp = this.add.image(px, py - 20, 'px').setTint(0xffe066).setScale(2.5).setDepth(30);
+        this.tweens.add({ targets: sp, x: px + Math.cos(a) * 55, y: py - 20 + Math.sin(a) * 55,
+          alpha: 0, duration: 700, onComplete: () => sp.destroy() });
+      }
+    } else if (F === 'hero') {
+      const c = this.add.image(px, py - 78, 'controller').setDepth(30).setAlpha(0);
+      this.tweens.add({ targets: c, alpha: 1, y: py - 66, duration: 250, delay: 300 });
+      this.time.delayedCall(1400, () => c.destroy());
+    } else if (F === 'soccer') {
+      const ball = this.add.image(px + 26, py - 90, 'ball').setDepth(30);
+      this.tweens.add({ targets: ball, y: py - 24, duration: 260, yoyo: true, repeat: 2,
+        ease: 'Quad.easeIn', onComplete: () => ball.destroy() });
+    } else if (F === 'bounce') {
+      [300, 650, 1000].forEach((d) => this.time.delayedCall(d, () => {
+        if (this.player.body.blocked.down) this.player.body.setVelocityY(-260);
+      }));
+    }
   }
 
   // ------------------------------------------------------------------- feel
@@ -570,11 +607,39 @@ class GameScene extends Phaser.Scene {
     this.userPaused = !this.userPaused;
     if (this.userPaused) {
       this.physics.world.pause();
-      this.pauseText.setVisible(true);
+      this.pauseMenu.setVisible(true);
+      this.updatePauseMenu();
     } else {
-      this.pauseText.setVisible(false);
+      this.pauseMenu.setVisible(false);
       if (this.hitStopCount <= 0) this.physics.world.resume();
     }
+  }
+
+  buildPauseMenu() {
+    const dim = this.add.image(480, 270, 'px').setDisplaySize(960, 540).setTint(0x0a0e14).setAlpha(0.72);
+    dim.setInteractive(); // swallow taps behind the menu
+    const title = this.add.text(480, 140, 'PAUSED', {
+      fontFamily: 'monospace', fontSize: '44px', color: '#ffe066', fontStyle: 'bold',
+    }).setOrigin(0.5);
+    const mkBtn = (y, label, cb) => {
+      const b = this.add.image(480, y, 'btnPad').setDisplaySize(280, 66).setAlpha(0.85);
+      b.setInteractive({ useHandCursor: true });
+      b.on('pointerdown', cb);
+      const t = this.add.text(480, y, label, {
+        fontFamily: 'monospace', fontSize: '24px', color: '#ffffff', fontStyle: 'bold',
+      }).setOrigin(0.5);
+      return { b, t };
+    };
+    const resume = mkBtn(230, 'RESUME', () => this.togglePause());
+    const restart = mkBtn(310, 'RESTART', () => this.scene.restart());
+    this.muteBtn = mkBtn(390, 'SOUND: ON', () => { window.SFX.toggleMute(); this.updatePauseMenu(); });
+    this.pauseMenu = this.add.container(0, 0, [
+      dim, title, resume.b, resume.t, restart.b, restart.t, this.muteBtn.b, this.muteBtn.t,
+    ]).setDepth(120).setScrollFactor(0).setVisible(false);
+  }
+
+  updatePauseMenu() {
+    this.muteBtn.t.setText(window.SFX.muted ? 'SOUND: OFF' : 'SOUND: ON');
   }
 
   floatText(x, y, str, color) {
@@ -611,12 +676,21 @@ class GameScene extends Phaser.Scene {
     this.mutedText = this.add.text(944, 10, 'MUTED', {
       fontFamily: 'monospace', fontSize: '16px', color: '#ff8888',
     }).setOrigin(1, 0).setScrollFactor(0).setDepth(90);
-    this.add.text(944, 34, '(R)estart (Enter)pause (M)ute', {
-      fontFamily: 'monospace', fontSize: '12px', color: '#cfe0ee',
-    }).setOrigin(1, 0).setScrollFactor(0).setDepth(90).setAlpha(0.6);
-    this.pauseText = this.add.text(480, 250, 'PAUSED\n\nEnter to resume', {
-      fontFamily: 'monospace', fontSize: '36px', color: '#ffe066', align: 'center',
-    }).setOrigin(0.5).setScrollFactor(0).setDepth(95).setVisible(false);
+    this.touchActive = this.sys.game.device.input.touch || /[?&]touch=1/.test(location.search);
+    if (!this.touchActive) {
+      this.add.text(944, 34, '(R)estart (Enter)pause (M)ute', {
+        fontFamily: 'monospace', fontSize: '12px', color: '#cfe0ee',
+      }).setOrigin(1, 0).setScrollFactor(0).setDepth(90).setAlpha(0.6);
+    } else {
+      const pb = this.add.image(908, 84, 'btnPad').setDisplaySize(64, 64).setAlpha(0.4)
+        .setScrollFactor(0).setDepth(100);
+      pb.setInteractive(new Phaser.Geom.Rectangle(-16, -16, 128, 128), Phaser.Geom.Rectangle.Contains);
+      pb.on('pointerdown', () => this.togglePause());
+      this.add.text(908, 84, 'II', {
+        fontFamily: 'monospace', fontSize: '22px', color: '#ffffff', fontStyle: 'bold',
+      }).setOrigin(0.5).setScrollFactor(0).setDepth(101).setAlpha(0.8);
+    }
+    this.buildPauseMenu();
   }
 
   updateHUD() {
