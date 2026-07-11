@@ -10,7 +10,8 @@ class BootScene extends Phaser.Scene {
     var g = this.make.graphics({ x: 0, y: 0, add: false });
 
     // ---- pixel sprites ----
-    PA.monkeyFrames(this, 'monkey', 2);              // 20x24 grid -> 40x48
+    PA.monkeyFrames(this, 'monkey', 2);              // base rig (title cameo)
+    window.CHARACTERS.forEach((c) => PA.monkeyFrames(this, c.id, 2, c.pal, c.patches));
     PA.render(this, 'banana', PA.GRIDS.banana, 2);   // 20x18
     PA.render(this, 'golden', PA.GRIDS.golden, 3, { y: 0xf2b632, Y: 0xfff8d0, W: 0x8a6236 }); // gold banana, big
     PA.render(this, 'beans', PA.GRIDS.beans, 2);
@@ -43,6 +44,17 @@ class BootScene extends Phaser.Scene {
       gg.fillStyle(0x3f8f3a); gg.fillCircle(52, 52, 50);
       gg.lineStyle(3, 0x8fdf70); gg.strokeCircle(52, 52, 50);
     });
+    tex('ball', 20, 20, function (gg) {
+      gg.fillStyle(0xffffff); gg.fillCircle(10, 10, 9);
+      gg.fillStyle(0x1c1410); gg.fillCircle(10, 10, 3);
+      gg.fillCircle(4, 8, 2); gg.fillCircle(16, 8, 2); gg.fillCircle(10, 17, 2);
+    });
+    tex('controller', 28, 16, function (gg) {
+      gg.fillStyle(0x8a93a3); gg.fillRoundedRect(0, 2, 28, 12, 5);
+      gg.fillStyle(0xd23b2f); gg.fillCircle(21, 8, 2);
+      gg.fillStyle(0x4a90d9); gg.fillCircle(25, 6, 2);
+      gg.fillStyle(0x1c1410); gg.fillRect(4, 7, 6, 2); gg.fillRect(6, 5, 2, 6);
+    });
     g.destroy();
 
     // ---- animations ----
@@ -52,13 +64,16 @@ class BootScene extends Phaser.Scene {
       A.create({ key: key, frames: frames.map(function (f) { return { key: f }; }),
                  frameRate: rate, repeat: repeat });
     }
-    mk('m_idle', ['monkey_idle0', 'monkey_idle1'], 2, -1);
-    mk('m_run', ['monkey_run0', 'monkey_run1', 'monkey_run2', 'monkey_run3'], 10, -1);
-    mk('m_jump', ['monkey_jump'], 1, 0);
-    mk('m_fall', ['monkey_fall'], 1, 0);
-    mk('m_poot', ['monkey_poot0', 'monkey_poot1'], 12, 0);
-    mk('m_hit', ['monkey_hit'], 1, 0);
-    mk('m_vic', ['monkey_vic0', 'monkey_vic1'], 4, -1);
+    const rigs = ['monkey'].concat(window.CHARACTERS.map((c) => c.id));
+    rigs.forEach((p) => {
+      mk(p + '_idle', [p + '_idle0', p + '_idle1'], 2, -1);
+      mk(p + '_run', [p + '_run0', p + '_run1', p + '_run2', p + '_run3'], 10, -1);
+      mk(p + '_jump', [p + '_jump'], 1, 0);
+      mk(p + '_fall', [p + '_fall'], 1, 0);
+      mk(p + '_poot', [p + '_poot0', p + '_poot1'], 12, 0);
+      mk(p + '_hit', [p + '_hit'], 1, 0);
+      mk(p + '_vic', [p + '_vic0', p + '_vic1'], 4, -1);
+    });
     mk('a_bees', ['bees0', 'bees1'], 8, -1);
     mk('a_snake', ['snake0', 'snake1'], 6, -1);
 
@@ -78,8 +93,15 @@ class BootScene extends Phaser.Scene {
         x += 80;
         if (x > 900) { x = 60; y += 130; }
       }
-      var demo = this.add.sprite(480, 430, 'monkey_idle0').setScale(2);
-      demo.play('m_run');
+      var gx = 160;
+      window.CHARACTERS.forEach((c) => {
+        var d = this.add.sprite(gx, 440, c.id + '_idle0').setScale(2);
+        d.play(c.id + '_run');
+        this.add.text(gx, 480, c.name, { fontFamily: 'monospace', fontSize: '12px', color: '#cde' }).setOrigin(0.5);
+        gx += 160;
+      });
+      var demo = this.add.sprite(60, 440, 'monkey_idle0').setScale(2);
+      demo.play('monkey_run');
       this.add.text(480, 500, 'run cycle x2', { fontFamily: 'monospace', fontSize: '12px', color: '#cde' }).setOrigin(0.5);
       return; // stay here for review
     }

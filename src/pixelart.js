@@ -210,11 +210,30 @@ window.PixelArt = (function () {
     '.....ooo...ooo......',
   ];
 
-  function monkeyFrames(scene, prefix, scale, pal) {
+  // accessory patches: {g, x, y, head} — head patches ride the head bob
+  var PATCHES = {
+    headband: { head: true, x: 6, y: 4, g: ['eeeeeeeeee', 'eeeeeeeeee'] },
+    chest1:   { head: false, x: 8, y: 15, g: ['kk', '.k', '.k'] },
+    tiara:    { head: true, x: 7, y: 0, g: ['.G.G.G', 'GGGGGG'] },
+    mask:     { head: true, x: 5, y: 6, g: ['RRRRRReeRee', 'RRRRRRekRek', 'RRRRRReeRee'] },
+    ponytail: { head: true, x: 0, y: 1, g: ['...nn', '..nnn', '.nnn.', 'nnn..', '.nn..', '..nn.', '...n.'] },
+    stripe:   { head: false, x: 7, y: 16, g: ['ggggg'] },
+    pigtails: { head: true, x: 0, y: 2, g: ['.bb', 'Rbb', 'bbb', '.bb'] },
+    pigtailR: { head: true, x: 17, y: 2, g: ['bb.', 'bbR', 'bbb', 'bb.'] },
+  };
+
+  function monkeyFrames(scene, prefix, scale, pal, patchNames) {
+    var names = (patchNames || []).slice();
+    if (names.indexOf('pigtails') !== -1) names.push('pigtailR');
+    var patchList = names.map(function (n) { return PATCHES[n]; }).filter(Boolean);
     function full(body, headDy) {
       var head = HEAD.map(function (r) { return r; });
       if (headDy === 1) head = [''].concat(head.slice(0, 13));
-      return head.concat(body);
+      var grid = head.concat(body);
+      patchList.forEach(function (pt) {
+        grid = overlay(grid, pt.g, pt.x, pt.y + (pt.head ? headDy : 0));
+      });
+      return grid;
     }
     render(scene, prefix + '_idle0', full(BODY_STAND, 0), scale, pal);
     render(scene, prefix + '_idle1', full(BODY_BREATHE, 1), scale, pal);
