@@ -1,7 +1,32 @@
 {
-  "mason":  { "select": "mason_select.m4a",  "poot": "mason_poot.m4a",  "golden": "mason_golden.m4a",  "victory": "mason_victory.m4a" },
-  "emmy":   { "select": "emmy_select.m4a",   "poot": "emmy_poot.m4a",   "golden": "emmy_golden.m4a",   "victory": "emmy_victory.m4a" },
-  "brooks": { "select": "brooks_select.m4a", "poot": "brooks_poot.m4a", "golden": "brooks_golden.m4a", "victory": "brooks_victory.m4a" },
-  "lilah":  { "select": "lilah_select.m4a",  "poot": "lilah_poot.m4a",  "golden": "lilah_golden.m4a",  "victory": "lilah_victory.m4a" },
-  "ellie":  { "select": "ellie_select.m4a",  "poot": "ellie_poot.m4a",  "golden": "ellie_golden.m4a",  "victory": "ellie_victory.m4a" }
+  "mason": {
+    "select": "mason_select.mp3",
+    "poot": "mason_poot.mp3",
+    "golden": "mason_golden.mp3",
+    "victory": "mason_victory.mp3"
+  },
+  "emmy": {
+    "select": "emmy_select.mp3",
+    "poot": "emmy_poot.mp3",
+    "golden": "emmy_golden.mp3",
+    "victory": "emmy_victory.mp3"
+  },
+  "brooks": {
+    "select": "brooks_select.mp3",
+    "poot": "brooks_poot.mp3",
+    "golden": "brooks_golden.mp3",
+    "victory": "brooks_victory.mp3"
+  },
+  "lilah": {
+    "select": "lilah_select.mp3",
+    "poot": "lilah_poot.mp3",
+    "golden": "lilah_golden.mp3",
+    "victory": "lilah_victory.mp3"
+  },
+  "ellie": {
+    "select": "ellie_select.mp3",
+    "poot": "ellie_poot.mp3",
+    "golden": "ellie_golden.mp3",
+    "victory": "ellie_victory.mp3"
+  }
 }
