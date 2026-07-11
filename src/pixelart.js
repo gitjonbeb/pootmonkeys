@@ -235,33 +235,32 @@ window.PixelArt = (function () {
 
   // ---- items --------------------------------------------------------------
   var BANANA = [
-    '....oo....',
-    '...oWwo...',
-    '..oyyyo...',
-    '.oyyYyyo..',
-    'oyyYyyyo..',
-    'oyyYyyo...',
-    'oyyyyo....',
-    '.oyyo.....',
-    '..oo......',
+    '..oo..........oo',
+    '..oWo........oyo',
+    '...oyo.......oyo',
+    '...oyyo.....oyyo',
+    '....oyyo...oyyo.',
+    '....oyyyo.oyyyo.',
+    '.....oyyyyyyyo..',
+    '.....oyYYYyyo...',
+    '......oYYYyo....',
+    '.......oooo.....',
   ];
-  var GOLDEN = [
-    '.....oo.....',
-    '..e.oWwo....',
-    '...oGGGo..e.',
-    '..oGGYGGo...',
-    '.oGGYGGGo...',
-    '.oGGYGGo....',
-    '.oGGGGo..e..',
-    '..oGGo......',
-    '.e.oo.......',
-  ];
+  var GOLDEN = BANANA; // same silhouette, gold palette override at render time
   var BEANS = [
-    '..ooooooooo..',
-    '.ongggggggno.',
-    'onggNgNgNggno',
-    '.ongggggggno.',
-    '..ooooooooo..',
+    '...........oo...',
+    '..........oNo...',
+    '.........ono....',
+    '.......oonno....',
+    '.....oonNNnno...',
+    '....onNNNNNno...',
+    '...onNNnNNnno...',
+    '...onNNNNNno....',
+    '..onnNNnNNno....',
+    '..onNNNNNno.....',
+    '...onNNnno......',
+    '....onnno.......',
+    '.....ooo........',
   ];
   var COCONUT = [
     '..oooo..',

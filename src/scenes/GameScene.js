@@ -378,9 +378,15 @@ class GameScene extends Phaser.Scene {
     });
     this.beeSwarms.forEach((bees) => {
       if (Phaser.Math.Distance.Between(this.player.x, this.player.y, bees.x, bees.y) <= T.pootStunRadius) {
+        const fresh = now >= bees.dispersedUntil;
         bees.dispersedUntil = now + T.beeDisperseMs;
         window.SFX.buzz();
         this.puff(bees.x, bees.y, 0xffd83d, 5);
+        if (fresh) { // dispersing pays like a stun — the poot earns its keep
+          this.score += 100;
+          this.enemyPts += 100;
+          this.floatText(bees.x, bees.y - 20, '+100', '#8fdf70');
+        }
       }
     });
     this.puff(this.player.x, this.player.y + 18, 0x8fdf70, 7);
@@ -561,6 +567,13 @@ class GameScene extends Phaser.Scene {
       this.pauseText.setVisible(false);
       if (this.hitStopCount <= 0) this.physics.world.resume();
     }
+  }
+
+  floatText(x, y, str, color) {
+    const t = this.add.text(x, y, str, {
+      fontFamily: 'monospace', fontSize: '22px', color: color, fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(50);
+    this.tweens.add({ targets: t, y: y - 50, alpha: 0, duration: 900, onComplete: () => t.destroy() });
   }
 
   puff(x, y, color, count) {
