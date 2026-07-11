@@ -6,6 +6,8 @@ a treehouse. One level, roughly two minutes, instant replay.
 
 A Poppy Studios Production.
 
+**Play it: https://gitjonbeb.github.io/pootmonkeys/** (works on desktop and iPad Safari)
+
 ## Current status
 
 **v0.1-graybox** — Phase 1 gray-box prototype. Rectangles and circles only.
@@ -77,8 +79,9 @@ silently. Instructions land here when the mechanism ships in Phase 4.
 
 ## Deploying to GitHub Pages
 
-Push to `main`; Pages serves the repo root. The vendored Phaser and relative
-paths mean no build step. Full instructions land here at Phase 5.
+Live at **https://gitjonbeb.github.io/pootmonkeys/** — Pages serves the repo
+root from the `main` branch. Any push to `main` redeploys automatically in
+about a minute. The vendored Phaser and relative paths mean no build step.
 
 ## Git tags
 
