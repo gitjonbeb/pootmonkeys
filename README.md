@@ -10,10 +10,13 @@ A Poppy Studios Production.
 
 ## Current status
 
-**v0.2-tuned** — Phase 2 complete: Jon signed off on movement and poot feel
-with the shipped defaults; the pit-respawn bug is fixed. Next: Phase 3 (full
-12,000 px level, pixel-art monkey with six animation states, jungle tileset,
-parallax, coconuts, bees, snake, checkpoints).
+**v0.3-skinned** — Phase 3 complete: full-length jungle level (8 sections,
+~220 tiles), pixel-art monkey with six animation states, crescent bananas,
+golden banana on the optional high path, coconut palms, bee swarm, snake,
+three checkpoints, two parallax canopy layers. All art is generated at runtime
+from ASCII pixel grids (src/pixelart.js) — no image files, so file:// and the
+standalone build keep working. Next: Phase 4 (five character variants per
+CHARACTERS.md, select/pause/finish screens, ranks, high scores, voice slots).
 
 Phase 1 gray-box prototype was rectangles and circles only.
 Movement, jump (coyote time + jump buffering), poot boost with charge meter,

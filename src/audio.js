@@ -70,6 +70,13 @@ window.SFX = (function () {
     stun()    { tone({ freq: 520, end: 240, dur: 0.16, type: 'square', vol: 0.07 }); },
     bounce()  { tone({ freq: 380, end: 900, dur: 0.12, type: 'square', vol: 0.09 }); },
     respawn() { tone({ freq: 300, end: 600, dur: 0.15, type: 'triangle', vol: 0.07 }); },
+    coconut() { tone({ freq: 140, end: 60, dur: 0.12, type: 'square', vol: 0.12 }); },
+    buzz()    { tone({ freq: 480, end: 220, dur: 0.3, type: 'sawtooth', vol: 0.06 });
+                tone({ freq: 520, end: 260, dur: 0.3, delay: 0.04, type: 'sawtooth', vol: 0.05 }); },
+    checkpoint() { tone({ freq: 392, end: 392, dur: 0.1, type: 'square', vol: 0.07 });
+                   tone({ freq: 587, end: 587, dur: 0.14, delay: 0.1, type: 'square', vol: 0.07 }); },
+    golden()  { [660, 880, 1100, 1320].forEach((f, i) =>
+                  tone({ freq: f, end: f * 1.1, dur: 0.12, delay: i * 0.08, type: 'triangle', vol: 0.09 })); },
     victory() { [523, 659, 784, 1047].forEach((f, i) =>
                   tone({ freq: f, end: f, dur: 0.16, delay: i * 0.13, type: 'square', vol: 0.08 })); },
   };

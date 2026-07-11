@@ -22,10 +22,13 @@ class FinishScene extends Phaser.Scene {
     const lines = [
       ['Bananas x ' + (r.bananas || 0), (r.bananaPts || 0)],
       ['Enemy stuns & bounces', (r.enemyPts || 0)],
+    ];
+    if (r.goldenPts) lines.push(['GOLDEN BANANA!', r.goldenPts]);
+    lines.push.apply(lines, [
       ['Reached the treehouse', 500],
       ['No-hit bonus', r.noHit ? 1000 : 0],
       ['Time bonus  (' + mm + ':' + ss + '.' + tenths + ')', (r.timeBonus || 0)],
-    ];
+    ]);
 
     let y = 145;
     lines.forEach(function (l) {
