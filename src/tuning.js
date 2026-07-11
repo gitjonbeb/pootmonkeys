@@ -4,7 +4,7 @@
 // The tuning overlay (backtick or ?tune=1) edits these live.
 // Phase 2 bakes Jon's final values in as the new defaults.
 
-window.TUNE_ENABLED = true; // set false for the final family build
+window.TUNE_ENABLED = false; // v1.0 family release: overlay off (code remains, flip to re-enable)
 window.SPEECH_FALLBACK_ENABLED = false; // browser TTS retired (too synthetic); real files still play
 
 window.TUNING = {

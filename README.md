@@ -10,32 +10,23 @@ A Poppy Studios Production.
 
 ## Current status
 
-**v0.4-characters** — Phase 4 complete: Mason, Emmy, Brooks, Lilah, and Ellie
-as cosmetic variants (palette swap + accessory, identical abilities), character
-select with catchphrase bubbles and spoken lines, per-character tinted poot
-clouds and victory flourishes, pause menu with touch buttons, ranks, top-10
-high scores with initials (per device), and the voice-slot system. Voices:
-real recordings in assets/voices/ take priority; until they arrive, the
-device's built-in speech reads each catchphrase (the 404s in the console for
-missing voice files are expected and harmless). Next: Phase 5 family release.
+**v1.0-family — released.** Five playable grandkids (Mason, Emmy, Brooks,
+Lilah, Ellie) with AI-voiced catchphrases, the full eight-section jungle level,
+three checkpoints, coconut palms, bee swarm, snake, golden banana, ranks, and
+per-device high scores. Feel values locked at Phase 2 sign-off; playtest
+rounds 1-3 (grandkid-certified) folded in. The tuning overlay is disabled via
+TUNE_ENABLED in src/tuning.js; flip it to true for balance work.
 
-Phase 3 was: full-length jungle level (8 sections,
-~220 tiles), pixel-art monkey with six animation states, crescent bananas,
-golden banana on the optional high path, coconut palms, bee swarm, snake,
-three checkpoints, two parallax canopy layers. All art is generated at runtime
-from ASCII pixel grids (src/pixelart.js) — no image files, so file:// and the
-standalone build keep working. Next: Phase 4 (five character variants per
-CHARACTERS.md, select/pause/finish screens, ranks, high scores, voice slots).
+Post-1.0 parking lot lives in IDEAS.md (headline: the Grumpy Gorilla boss).
+Real grandkid recordings can replace any AI clip file-by-file at any time —
+see Voice clips below.
 
-Phase 1 gray-box prototype was rectangles and circles only.
-Movement, jump (coyote time + jump buffering), poot boost with charge meter,
-beans refueling, bananas and score, mud pit, poot-required gap, one patrolling
-enemy with stun and bounce-defeat, finish door, count-up timer, keyboard and
-touch controls, live tuning overlay.
+## The standalone file
 
-Next gate: **Phase 2 feel tuning.** Jon plays, adjusts the overlay, sends back
-values; they get baked into `src/tuning.js` as the new defaults. No art, full
-level, or characters until movement and the poot feel good.
+dist/pootmonkeys-standalone.html is the whole game in one file — code, art,
+and all twenty voice clips embedded. Text or email it to parents; it runs
+offline from a double-click (or via iOS Files -> share -> open in Safari).
+Rebuilt each release; the repo copy is the shipping artifact.
 
 ## How to run
 

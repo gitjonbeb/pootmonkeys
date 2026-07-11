@@ -11,6 +11,16 @@ window.Voice = (function () {
   function init() {
     if (started) return;
     started = true;
+    if (window.VOICE_DATA) {
+      // standalone build: clips embedded as data URIs, no network needed
+      Object.keys(window.VOICE_DATA).forEach(function (key) {
+        var a = new Audio();
+        a.preload = 'auto';
+        a.src = window.VOICE_DATA[key];
+        files[key] = a;
+      });
+      return;
+    }
     try {
       fetch('assets/voices/manifest.json')
         .then(function (r) { return r.json(); })
