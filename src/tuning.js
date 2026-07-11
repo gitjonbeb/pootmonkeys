@@ -45,3 +45,11 @@ window.TUNING = {
 };
 
 window.TUNING_DEFAULTS = JSON.parse(JSON.stringify(window.TUNING));
+
+// Rank thresholds (§5.6) — adjustable
+window.RANKS = [
+  [8000, 'Supreme Keeper of the Sacred Stink'],
+  [5000, 'Prime Pootmonkey'],
+  [2000, 'Banana Blaster'],
+  [0,    'Tiny Tooter'],
+];

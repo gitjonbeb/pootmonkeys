@@ -57,6 +57,7 @@ window.SFX = (function () {
     get muted() { return muted; },
     toggleMute() {
       muted = !muted;
+      try { if (muted && window.speechSynthesis) window.speechSynthesis.cancel(); } catch (e) {}
       try { localStorage.setItem('pootmonkeys.muted', muted ? '1' : '0'); } catch (e) {}
       return muted;
     },
